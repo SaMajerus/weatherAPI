@@ -1,21 +1,52 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
-import Triangle from './triangle.js';
 
-function handleTriangleForm() {
-  event.preventDefault();
-  document.querySelector('#response').innerText = null;
-  const length2 = parseInt(document.querySelector('#length2').value);
-  const length1 = parseInt(document.querySelector('#length1').value);
-  const length3 = parseInt(document.querySelector('#length3').value);
-  const triangle = new Triangle(length1, length2, length3);
-  const response = triangle.checkType();
-  const pTag = document.createElement("p");
-  pTag.append(response);
-  document.querySelector('#response').append(pTag);
+// Business Logic 
+
+function getWeather(cityName, stateCode, country) {
+  let request = new XMLHttpRequest();
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName},${stateCode},${country}&appid=816f532ca6d12d28fab42d3c219be8d9`;
+
+  request.addEventListener("loadend", function() {
+    const response = JSON.parse(this.responseText);
+    if (this.status === 200) {
+      printElements(response, cityName, stateCode);
+    } else {
+      printError(this, cityName, stateCode);
+    }
+  });
+  request.open("GET", url, true);
+  request.send();
 }
 
-window.addEventListener("load", function() {
-  document.querySelector("#triangle-checker-form").addEventListener("submit", handleTriangleForm);
-});
+// UI Logic
+
+function printError(request, cityName) {
+  document.querySelector('#showResponse').innerText = `There was an error accessing the weather data for ${cityName}: ${request.status} ${request.statusText}`;
+}
+
+function printElements(apiResponse, cityName) {
+  document.querySelector('#showResponse').innerText = `The humidity in ${cityName.charAt(0).toUpperCase() + cityName.slice(1)}, is ${apiResponse.main.humidity}%.
+  The temperature in Fahrenheit is ${1.8 * (apiResponse.main.temp - 273) + 32} degrees.
+  The wind is ${apiResponse.wind.speed} mph`;
+}
+
+function handleFormSubmission(event) {
+  event.preventDefault();
+
+  let input = document.getElementById('cityName').value;
+  input.toLowerCase();
+
+  // let stateCode = document.getElementById('stateCode').value;
+  /*let countryCode = document.getElementById('countryCode').value;*/
+
+  getWeather(input);
+
+  document.querySelector('form').reset();
+}
+
+window.addEventListener("load", function(){
+  let form = document.querySelector('form');
+  form.addEventListener("submit", handleFormSubmission);
+})
