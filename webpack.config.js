@@ -15,14 +15,14 @@ module.exports = {
     contentBase: './dist'    
   },
   plugins: [
-    new Dotenv(),
     new ESLintPlugin(),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Shape Tracker',
       template: './src/index.html',
       inject: 'body'
-    })
+    }),
+    new Dotenv()
   ],
   module: {
     rules: [

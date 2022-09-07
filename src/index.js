@@ -6,7 +6,7 @@ import './css/styles.css';
 
 function getWeather(cityName, stateCode, country) {
   let request = new XMLHttpRequest();
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName},${stateCode},${country}&appid=816f532ca6d12d28fab42d3c219be8d9`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName},${stateCode},${country}&appid=${process.env.API_KEY}`;
 
   request.addEventListener("loadend", function() {
     const response = JSON.parse(this.responseText);
